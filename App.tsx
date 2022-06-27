@@ -4,8 +4,10 @@ import Animated, {
   useAnimatedStyle,
   Easing,
 } from 'react-native-reanimated';
-import { View, Button } from 'react-native';
+import { View, Button, Dimensions } from 'react-native';
 import React from 'react';
+
+const { width, height } = Dimensions.get("screen")
 
 export default function App() {
   const randomWidth = useSharedValue(10);
@@ -17,7 +19,8 @@ export default function App() {
 
   const style = useAnimatedStyle(() => {
     return {
-      width: withTiming(randomWidth.value, config),
+      height: withTiming(randomWidth.value, config),
+      width,
     };
   });
 
@@ -26,12 +29,12 @@ export default function App() {
       style={{
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         flexDirection: 'column',
+
       }}>
-      <Animated.View
-        style={[{ width: 100, height: 80, backgroundColor: 'black', margin: 30 }, style]}
-      />
+      <Animated.Image style={style} source={{ uri: "https://images.unsplash.com/photo-1656265932544-1772c9a8eb7c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2787&q=80" }} />
+
       <Button
         title="toggle"
         onPress={() => {
