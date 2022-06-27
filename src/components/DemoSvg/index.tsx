@@ -1,6 +1,14 @@
-import { StyleSheet, Dimensions } from "react-native";
-import React from "react";
+import { Dimensions } from "react-native";
+import React, { useEffect } from "react";
 import Svg, { Circle, G, Path, Text } from "react-native-svg";
+import Animated, {
+  useAnimatedProps,
+  useDerivedValue,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
+
+const AnimatedPath = Animated.createAnimatedComponent(Path);
 const dimensions = Dimensions.get("screen");
 
 type ConfigAnchosProps = {
@@ -53,39 +61,58 @@ function configAnchos({ a, b, c }: ConfigAnchosProps) {
         dx: 10,
       },
     },
-    lineGreen: `M ${(a[0] + b[0]) / 2} ${(a[1] + b[1]) / 2} l ${(a[0] + c[0]) / 2 - a[0]} ${(a[1] + c[1]) / 2 - a[1]}`,
-    lineBlue: `M ${a[0]} ${a[1]} q 150 ${-a[1] + b[1]} ${c[0] - a[0]} ${-(a[1] - c[1])}`
+    lineGreen: `M ${(a[0] + b[0]) / 2} ${(a[1] + b[1]) / 2} l ${
+      (a[0] + c[0]) / 2 - a[0]
+    } ${(a[1] + c[1]) / 2 - a[1]}`,
+    lineBlue: `M ${a[0]} ${a[1]} q 150 ${-a[1] + b[1]} ${c[0] - a[0]} ${-(
+      a[1] - c[1]
+    )}`,
   };
 }
 
 export function DemoSVG() {
+  const anima = useSharedValue(10);
   const config = configAnchos({
     a: [50, dimensions.height - dimensions.width / 2],
     b: [dimensions.width / 2, dimensions.width / 2],
     c: [dimensions.width - 50, dimensions.height - dimensions.width / 2],
   });
+
+  const followY = useDerivedValue(() => {
+    return withSpring(anima.value);
+  });
+
+  const animatedProps = useAnimatedProps(() => {
+    const path = `M ${dimensions.width / 2} 0 
+    l 0 400
+    l ${followY.value} 200
+    `;
+    return { d: path };
+  });
+
+  useEffect(() => {
+    setTimeout(() => {
+      anima.value = 200;
+    }, 2000);
+  }, []);
+
   return (
-    <Svg height={dimensions.height} width={dimensions.width} style={{ backgroundColor: "yellow" }}>
-      <Path
-        id="lineAB"
-        d={config.a.line}
-        stroke="red"
-        strokeWidth="3"
-        fill="none"
+    <Svg
+      height={dimensions.height}
+      width={dimensions.width}
+      style={{ backgroundColor: "yellow" }}
+    >
+      <AnimatedPath
+        animatedProps={animatedProps}
+        fill="transparent"
+        strokeWidth={5}
+        strokeMiterlimit="10"
+        strokeDasharray={10}
+        stroke="purple"
       />
-      <Path
-        id="lineBC"
-        d={config.b.line}
-        stroke="red"
-        strokeWidth="3"
-        fill="none"
-      />
-      <Path
-        d={config.lineGreen}
-        stroke="green"
-        strokeWidth="3"
-        fill="none"
-      />
+      <Path d={config.a.line} stroke="red" strokeWidth="3" fill="none" />
+      <Path d={config.b.line} stroke="red" strokeWidth="3" fill="none" />
+      <Path d={config.lineGreen} stroke="green" strokeWidth="3" fill="none" />
       <Path
         id="lineBlue"
         d={config.lineBlue}
@@ -142,9 +169,3 @@ export function DemoSVG() {
     </Svg>
   );
 }
-
-const styles = StyleSheet.create({
-  text: {
-    fontSize: 30,
-  },
-});
