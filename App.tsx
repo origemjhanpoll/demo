@@ -1,11 +1,11 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
+import { GalleryHomePage } from "./src/features/gallery/page/home";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Jean Paul</Text>
-      <Text>Open up App.js to start working on your app!</Text>
+      <GalleryHomePage />
       <StatusBar style="auto" />
     </View>
   );
