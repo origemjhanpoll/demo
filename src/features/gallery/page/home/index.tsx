@@ -8,7 +8,6 @@ import {
   Pressable,
   StyleSheet,
 } from "react-native";
-import { ImageRender } from "../../components/image";
 import { fetchImagesFromPexels } from "../../service";
 const { width, height } = Dimensions.get("screen");
 
