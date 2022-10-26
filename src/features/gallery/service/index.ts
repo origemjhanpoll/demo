@@ -1,4 +1,5 @@
-import { API_KEY } from "../config";
+import { API_KEY } from "../../../../keys";
+
 
 const API_URL = "https://api.pexels.com/v1/search?query=people";
 
